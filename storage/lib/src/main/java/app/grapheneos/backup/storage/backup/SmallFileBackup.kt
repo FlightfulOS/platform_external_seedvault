@@ -12,6 +12,7 @@ import app.grapheneos.backup.storage.content.ContentFile
 import app.grapheneos.backup.storage.content.DocFile
 import app.grapheneos.backup.storage.content.MediaFile
 import app.grapheneos.backup.storage.db.CachedFile
+import app.grapheneos.backup.storage.db.ChunksCache
 import app.grapheneos.backup.storage.db.FilesCache
 import app.grapheneos.seedvault.core.backends.saf.openInputStream
 import java.io.IOException
@@ -20,6 +21,7 @@ import java.security.GeneralSecurityException
 internal class SmallFileBackup(
     private val contentResolver: ContentResolver,
     private val filesCache: FilesCache,
+    private val chunksCache: ChunksCache,
     private val zipChunker: ZipChunker,
     private val hasMediaAccessPerm: Boolean,
 ) {
@@ -30,7 +32,7 @@ internal class SmallFileBackup(
 
     suspend fun backupFiles(
         files: List<ContentFile>,
-        availableChunkIds: HashSet<String>,
+        availableChunkIds: Set<String>,
         backupObserver: BackupObserver?,
     ): BackupResult {
         val chunkIds = HashSet<String>()
@@ -42,9 +44,12 @@ internal class SmallFileBackup(
 
         val changedFiles = files.filter { file ->
             val cachedFile = filesCache.getByUri(file.uri)
-            val fileMissingChunkIds = cachedFile?.chunks?.minus(availableChunkIds) ?: emptyList()
+            val fileMissingChunkIds =
+                cachedFile?.chunks?.minus(availableChunkIds) ?: emptyList()
+            val hasCorruption =
+                chunksCache.hasCorruptedChunks(cachedFile?.chunks ?: emptyList())
             missingChunkIds.addAll(fileMissingChunkIds)
-            if (fileMissingChunkIds.isEmpty() && file.hasNotChanged(cachedFile)) {
+            if (fileMissingChunkIds.isEmpty() && file.hasNotChanged(cachedFile) && !hasCorruption) {
                 Log.d(TAG, "File has NOT changed: ${file.fileName}")
                 cachedFile as CachedFile // not null because hasNotChanged() returned true
                 if (file is MediaFile) {

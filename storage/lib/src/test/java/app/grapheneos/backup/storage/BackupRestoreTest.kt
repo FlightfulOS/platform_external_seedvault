@@ -22,33 +22,34 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import app.grapheneos.backup.storage.api.SnapshotResult
-import app.grapheneos.backup.storage.api.StoredSnapshot
-import app.grapheneos.backup.storage.backup.Backup
-import app.grapheneos.backup.storage.backup.Backup.Companion.CHUNK_SIZE_MAX
-import app.grapheneos.backup.storage.backup.Backup.Companion.SMALL_FILE_SIZE_MAX
-import app.grapheneos.backup.storage.backup.BackupMediaFile
-import app.grapheneos.backup.storage.backup.BackupSnapshot
-import app.grapheneos.backup.storage.backup.ChunksCacheRepopulater
-import app.grapheneos.backup.storage.content.ContentFile
-import app.grapheneos.backup.storage.content.DocFile
-import app.grapheneos.backup.storage.content.MediaFile
-import app.grapheneos.backup.storage.db.CachedChunk
-import app.grapheneos.backup.storage.db.CachedFile
-import app.grapheneos.backup.storage.db.ChunksCache
-import app.grapheneos.backup.storage.db.Db
-import app.grapheneos.backup.storage.db.FilesCache
-import app.grapheneos.backup.storage.restore.FileRestore
-import app.grapheneos.backup.storage.restore.RestorableFile
-import app.grapheneos.backup.storage.restore.Restore
-import app.grapheneos.backup.storage.scanner.FileScanner
-import app.grapheneos.backup.storage.scanner.FileScannerResult
-import app.grapheneos.seedvault.core.backends.Backend
-import app.grapheneos.seedvault.core.backends.FileBackupFileType.Blob
-import app.grapheneos.seedvault.core.backends.FileBackupFileType.Snapshot
-import app.grapheneos.seedvault.core.crypto.CoreCrypto.ALGORITHM_HMAC
-import app.grapheneos.seedvault.core.crypto.CoreCrypto.KEY_SIZE_BYTES
-import app.grapheneos.seedvault.core.crypto.KeyManager
+import org.calyxos.backup.storage.api.SnapshotResult
+import org.calyxos.backup.storage.api.StoredSnapshot
+import org.calyxos.backup.storage.backup.Backup
+import org.calyxos.backup.storage.backup.Backup.Companion.CHUNK_SIZE_MAX
+import org.calyxos.backup.storage.backup.Backup.Companion.SMALL_FILE_SIZE_MAX
+import org.calyxos.backup.storage.backup.BackupMediaFile
+import org.calyxos.backup.storage.backup.BackupSnapshot
+import org.calyxos.backup.storage.backup.ChunksCacheRepopulater
+import org.calyxos.backup.storage.content.ContentFile
+import org.calyxos.backup.storage.content.DocFile
+import org.calyxos.backup.storage.content.MediaFile
+import org.calyxos.backup.storage.db.CachedChunk
+import org.calyxos.backup.storage.db.CachedFile
+import org.calyxos.backup.storage.db.ChunksCache
+import org.calyxos.backup.storage.db.Db
+import org.calyxos.backup.storage.db.FilesCache
+import org.calyxos.backup.storage.restore.FileRestore
+import org.calyxos.backup.storage.restore.RestorableFile
+import org.calyxos.backup.storage.restore.Restore
+import org.calyxos.backup.storage.scanner.FileScanner
+import org.calyxos.backup.storage.scanner.FileScannerResult
+import org.calyxos.seedvault.core.backends.Backend
+import org.calyxos.seedvault.core.backends.FileBackupFileType.Blob
+import org.calyxos.seedvault.core.backends.FileBackupFileType.Snapshot
+import org.calyxos.seedvault.core.backends.IBackendManager
+import org.calyxos.seedvault.core.crypto.CoreCrypto.ALGORITHM_HMAC
+import org.calyxos.seedvault.core.crypto.CoreCrypto.KEY_SIZE_BYTES
+import org.calyxos.seedvault.core.crypto.KeyManager
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -73,12 +74,12 @@ internal class BackupRestoreTest {
     private val contentResolver: ContentResolver = mockk()
 
     private val fileScanner: FileScanner = mockk()
-    private val backendGetter: () -> Backend = mockk()
+    private val backendManager: IBackendManager = mockk()
     private val androidId: String = getRandomString()
     private val keyManager: KeyManager = mockk()
     private val backend: Backend = mockk()
     private val fileRestore: FileRestore = mockk()
-    private val snapshotRetriever = SnapshotRetriever(backendGetter)
+    private val snapshotRetriever = SnapshotRetriever(backendManager)
     private val cacheRepopulater: ChunksCacheRepopulater = mockk()
 
     init {
@@ -89,7 +90,7 @@ internal class BackupRestoreTest {
 
         mockkStatic("app.grapheneos.backup.storage.UriUtilsKt")
 
-        every { backendGetter() } returns backend
+        every { backendManager.backend } returns backend
         every { db.getFilesCache() } returns filesCache
         every { db.getChunksCache() } returns chunksCache
         every { keyManager.getMainKey() } returns SecretKeySpec(
@@ -101,13 +102,19 @@ internal class BackupRestoreTest {
     }
 
     private val restore =
-        Restore(context, backendGetter, keyManager, snapshotRetriever, fileRestore)
+        Restore(context, backendManager, keyManager, snapshotRetriever, fileRestore)
 
     @Test
     fun testZipAndSingleRandom(): Unit = runBlocking {
-        val backup =
-            Backup(context, db, fileScanner, backendGetter, androidId, keyManager, cacheRepopulater)
-
+        val backup = Backup(
+            context = context,
+            db = db,
+            fileScanner = fileScanner,
+            backendManager = backendManager,
+            androidId = androidId,
+            keyManager = keyManager,
+            cacheRepopulater = cacheRepopulater,
+        )
         val smallFileMBytes = Random.nextBytes(Random.nextInt(SMALL_FILE_SIZE_MAX))
         val smallFileM = getRandomMediaFile(smallFileMBytes.size)
         val smallFileDBytes = Random.nextBytes(Random.nextInt(SMALL_FILE_SIZE_MAX))
@@ -131,7 +138,7 @@ internal class BackupRestoreTest {
         val availableChunks = emptyList<String>()
         coEvery { backend.list(any(), Blob::class, callback = any()) } just Runs
         every {
-            chunksCache.areAllAvailableChunksCached(db, availableChunks.toHashSet())
+            chunksCache.areAllAvailableChunksCached(availableChunks.toHashSet())
         } returns true
         every { fileScanner.getFiles() } returns scannedFiles
         every { filesCache.getByUri(any()) } returns null // nothing is cached, all is new
@@ -160,6 +167,7 @@ internal class BackupRestoreTest {
         coEvery { backend.save(any<Blob>()) } returnsMany listOf(
             zipChunkOutputStream, mOutputStream, dOutputStream
         )
+        every { chunksCache.hasCorruptedChunks(any()) } returns false
         every { chunksCache.insert(any<CachedChunk>()) } just Runs
         every { filesCache.upsert(capture(cachedFiles)) } just Runs
 
@@ -245,7 +253,7 @@ internal class BackupRestoreTest {
             context = context,
             db = db,
             fileScanner = fileScanner,
-            backendGetter = backendGetter,
+            backendManager = backendManager,
             androidId = androidId,
             keyManager = keyManager,
             cacheRepopulater = cacheRepopulater,
@@ -275,7 +283,7 @@ internal class BackupRestoreTest {
         val availableChunks = emptyList<String>()
         coEvery { backend.list(any(), Blob::class, callback = any()) } just Runs
         every {
-            chunksCache.areAllAvailableChunksCached(db, availableChunks.toHashSet())
+            chunksCache.areAllAvailableChunksCached(availableChunks.toHashSet())
         } returns true
         every { fileScanner.getFiles() } returns scannedFiles
         every { filesCache.getByUri(any()) } returns null // nothing is cached, all is new
@@ -346,6 +354,7 @@ internal class BackupRestoreTest {
             )
         } returns id40d00c
 
+        every { chunksCache.hasCorruptedChunks(any()) } returns false
         every { chunksCache.insert(any<CachedChunk>()) } just Runs
         every { filesCache.upsert(capture(cachedFiles)) } just Runs
 
@@ -478,22 +487,22 @@ internal class BackupRestoreTest {
 
     @Test
     fun testBackupUpdatesBackend(): Unit = runBlocking {
-        val backendGetterNew: () -> Backend = mockk()
+        val backendManagerNew: IBackendManager = mockk()
         val backend1: Backend = mockk()
         val backend2: Backend = mockk()
         val backup = Backup(
             context = context,
             db = db,
             fileScanner = fileScanner,
-            backendGetter = backendGetterNew,
+            backendManager = backendManagerNew,
             androidId = androidId,
             keyManager = keyManager,
             cacheRepopulater = cacheRepopulater,
         )
-        every { backendGetterNew() } returnsMany listOf(backend1, backend2)
+        every { backendManagerNew.backend } returnsMany listOf(backend1, backend2)
 
         coEvery { backend1.list(any(), Blob::class, callback = any()) } just Runs
-        every { chunksCache.areAllAvailableChunksCached(db, emptySet()) } returns true
+        every { chunksCache.areAllAvailableChunksCached(emptySet()) } returns true
         every { fileScanner.getFiles() } returns FileScannerResult(emptyList(), emptyList())
         every { filesCache.getByUri(any()) } returns null // nothing is cached, all is new
 

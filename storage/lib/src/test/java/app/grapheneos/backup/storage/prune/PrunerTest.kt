@@ -30,6 +30,24 @@ import app.grapheneos.seedvault.core.backends.FileBackupFileType.Blob
 import app.grapheneos.seedvault.core.crypto.CoreCrypto.ALGORITHM_HMAC
 import app.grapheneos.seedvault.core.crypto.CoreCrypto.KEY_SIZE_BYTES
 import app.grapheneos.seedvault.core.crypto.KeyManager
+import org.calyxos.backup.storage.SnapshotRetriever
+import org.calyxos.backup.storage.api.StoredSnapshot
+import org.calyxos.backup.storage.backup.BackupDocumentFile
+import org.calyxos.backup.storage.backup.BackupMediaFile
+import org.calyxos.backup.storage.backup.BackupSnapshot
+import org.calyxos.backup.storage.crypto.StreamCrypto
+import org.calyxos.backup.storage.db.CachedChunk
+import org.calyxos.backup.storage.db.ChunksCache
+import org.calyxos.backup.storage.db.Db
+import org.calyxos.backup.storage.getCurrentBackupSnapshots
+import org.calyxos.backup.storage.getRandomString
+import org.calyxos.backup.storage.mockLog
+import org.calyxos.seedvault.core.backends.Backend
+import org.calyxos.seedvault.core.backends.FileBackupFileType.Blob
+import org.calyxos.seedvault.core.backends.IBackendManager
+import org.calyxos.seedvault.core.crypto.CoreCrypto.ALGORITHM_HMAC
+import org.calyxos.seedvault.core.crypto.CoreCrypto.KEY_SIZE_BYTES
+import org.calyxos.seedvault.core.crypto.KeyManager
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -40,7 +58,7 @@ internal class PrunerTest {
 
     private val db: Db = mockk()
     private val chunksCache: ChunksCache = mockk()
-    private val backendGetter: () -> Backend = mockk()
+    private val backendManager: IBackendManager = mockk()
     private val androidId: String = getRandomString()
     private val keyManager: KeyManager = mockk()
     private val backend: Backend = mockk()
@@ -53,7 +71,7 @@ internal class PrunerTest {
     init {
         mockLog(false)
         mockkStatic("app.grapheneos.backup.storage.SnapshotRetrieverKt")
-        every { backendGetter() } returns backend
+        every { backendManager.backend } returns backend
         every { db.getChunksCache() } returns chunksCache
         every { keyManager.getMainKey() } returns mainKey
         every { streamCrypto.deriveStreamKey(mainKey) } returns streamKey
@@ -62,7 +80,7 @@ internal class PrunerTest {
     private val pruner = Pruner(
         db = db,
         retentionManager = retentionManager,
-        storagePluginGetter = backendGetter,
+        backendManager = backendManager,
         androidId = androidId,
         keyManager = keyManager,
         snapshotRetriever = snapshotRetriever,
