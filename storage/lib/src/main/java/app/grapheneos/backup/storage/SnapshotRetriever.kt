@@ -6,14 +6,14 @@
 package app.grapheneos.backup.storage
 
 import com.google.protobuf.InvalidProtocolBufferException
-import org.calyxos.backup.storage.api.StoredSnapshot
-import org.calyxos.backup.storage.backup.BackupSnapshot
-import org.calyxos.backup.storage.crypto.StreamCrypto
-import org.calyxos.backup.storage.restore.readVersion
-import org.calyxos.seedvault.core.backends.Backend
-import org.calyxos.seedvault.core.backends.FileBackupFileType
-import org.calyxos.seedvault.core.backends.IBackendManager
-import org.calyxos.seedvault.core.backends.TopLevelFolder
+import app.grapheneos.backup.storage.api.StoredSnapshot
+import app.grapheneos.backup.storage.backup.BackupSnapshot
+import app.grapheneos.backup.storage.crypto.StreamCrypto
+import app.grapheneos.backup.storage.restore.readVersion
+import app.grapheneos.seedvault.core.backends.Backend
+import app.grapheneos.seedvault.core.backends.FileBackupFileType
+import app.grapheneos.seedvault.core.backends.IBackendManager
+import app.grapheneos.seedvault.core.backends.TopLevelFolder
 import java.io.IOException
 import java.security.GeneralSecurityException
 

@@ -10,7 +10,7 @@ import android.util.Log
 import app.grapheneos.backup.storage.api.RestoreObserver
 import app.grapheneos.backup.storage.api.StoredSnapshot
 import app.grapheneos.backup.storage.crypto.StreamCrypto
-import org.calyxos.seedvault.core.backends.IBackendManager
+import app.grapheneos.seedvault.core.backends.IBackendManager
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

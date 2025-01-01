@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.ui.check
+package app.grapheneos.backup.storage.ui.check
 
 import android.app.NotificationManager
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import org.calyxos.backup.storage.R
-import org.calyxos.backup.storage.api.SnapshotItem
-import org.calyxos.backup.storage.api.StorageBackup
-import org.calyxos.backup.storage.ui.Notifications.Companion.onCheckCompleteNotificationSeen
-import org.calyxos.backup.storage.ui.restore.FileSelectionManager
-import org.calyxos.backup.storage.ui.restore.SnapshotClickListener
+import app.grapheneos.backup.storage.R
+import app.grapheneos.backup.storage.api.SnapshotItem
+import app.grapheneos.backup.storage.api.StorageBackup
+import app.grapheneos.backup.storage.ui.Notifications.Companion.onCheckCompleteNotificationSeen
+import app.grapheneos.backup.storage.ui.restore.FileSelectionManager
+import app.grapheneos.backup.storage.ui.restore.SnapshotClickListener
 
 internal const val ACTION_FINISHED = "FINISHED"
 internal const val ACTION_SHOW = "SHOW"

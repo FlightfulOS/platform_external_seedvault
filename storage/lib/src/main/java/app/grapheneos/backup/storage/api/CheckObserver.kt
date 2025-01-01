@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.api
+package app.grapheneos.backup.storage.api
 
 public interface CheckObserver {
 

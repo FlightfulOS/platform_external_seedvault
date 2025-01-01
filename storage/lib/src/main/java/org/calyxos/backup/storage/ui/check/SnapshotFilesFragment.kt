@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.ui.check
+package app.grapheneos.backup.storage.ui.check
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,10 +20,10 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
-import org.calyxos.backup.storage.R
-import org.calyxos.backup.storage.api.CheckResult
-import org.calyxos.backup.storage.api.SnapshotItem
-import org.calyxos.backup.storage.ui.restore.FilesAdapter
+import app.grapheneos.backup.storage.R
+import app.grapheneos.backup.storage.api.CheckResult
+import app.grapheneos.backup.storage.api.SnapshotItem
+import app.grapheneos.backup.storage.ui.restore.FilesAdapter
 
 internal const val SNAPSHOT_TIMESTAMP = "snapshotTimestamp"
 

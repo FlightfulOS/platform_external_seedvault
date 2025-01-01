@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.db
+package app.grapheneos.backup.storage.db
 
 import androidx.room.Room.databaseBuilder
 import androidx.room.testing.MigrationTestHelper
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import org.calyxos.seedvault.core.toHexString
+import app.grapheneos.seedvault.core.toHexString
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Rule

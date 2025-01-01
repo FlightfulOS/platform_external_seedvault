@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.check
+package app.grapheneos.backup.storage.check
 
 import android.content.Context
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
@@ -18,9 +18,9 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import org.calyxos.backup.storage.api.StorageBackup
-import org.calyxos.backup.storage.ui.NOTIFICATION_ID_CHECK
-import org.calyxos.backup.storage.ui.Notifications
+import app.grapheneos.backup.storage.api.StorageBackup
+import app.grapheneos.backup.storage.ui.NOTIFICATION_ID_CHECK
+import app.grapheneos.backup.storage.ui.Notifications
 import java.time.Duration
 
 public abstract class CheckerWorker(
@@ -31,7 +31,7 @@ public abstract class CheckerWorker(
     public companion object {
         private val TAG = CheckerWorker::class.simpleName
         private const val PERCENT = "percent"
-        public const val UNIQUE_WORK_NAME: String = "org.calyxos.backup.storage.FILE_BACKUP_CHECK"
+        public const val UNIQUE_WORK_NAME: String = "app.grapheneos.backup.storage.FILE_BACKUP_CHECK"
 
         public fun scheduleNow(
             context: Context,

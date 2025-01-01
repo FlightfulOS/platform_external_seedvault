@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.api
+package app.grapheneos.backup.storage.api
 
-import org.calyxos.backup.storage.backup.BackupSnapshot
+import app.grapheneos.backup.storage.backup.BackupSnapshot
 
 public sealed class CheckResult {
 

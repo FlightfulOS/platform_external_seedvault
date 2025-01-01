@@ -24,9 +24,9 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat.Action
 import androidx.core.app.NotificationCompat.Builder
 import androidx.core.app.NotificationCompat.PRIORITY_DEFAULT
-import org.calyxos.backup.storage.R
-import org.calyxos.backup.storage.ui.check.ACTION_FINISHED
-import org.calyxos.backup.storage.ui.check.ACTION_SHOW
+import app.grapheneos.backup.storage.R
+import app.grapheneos.backup.storage.ui.check.ACTION_FINISHED
+import app.grapheneos.backup.storage.ui.check.ACTION_SHOW
 
 private const val CHANNEL_ID_BACKUP = "seedvault.storage.backup"
 private const val CHANNEL_ID_RESTORE = "seedvault.storage.restore"

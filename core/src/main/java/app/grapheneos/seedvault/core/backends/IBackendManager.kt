@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.seedvault.core.backends
+package app.grapheneos.seedvault.core.backends
 
 public interface IBackendManager {
     public val backend: Backend

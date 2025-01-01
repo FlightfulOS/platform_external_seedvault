@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.check
+package app.grapheneos.backup.storage.check
 
 import android.content.Context
-import org.calyxos.backup.storage.api.CheckObserver
-import org.calyxos.backup.storage.ui.Notifications
+import app.grapheneos.backup.storage.api.CheckObserver
+import app.grapheneos.backup.storage.ui.Notifications
 
 public open class NotificationCheckObserver internal constructor(
     private val n: Notifications,

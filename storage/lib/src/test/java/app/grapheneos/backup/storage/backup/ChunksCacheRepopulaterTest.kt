@@ -14,16 +14,16 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
 import kotlinx.coroutines.runBlocking
-import org.calyxos.backup.storage.SnapshotRetriever
-import org.calyxos.backup.storage.api.StoredSnapshot
-import org.calyxos.backup.storage.db.CachedChunk
-import org.calyxos.backup.storage.db.ChunksCache
-import org.calyxos.backup.storage.getCurrentBackupSnapshots
-import org.calyxos.backup.storage.getRandomString
-import org.calyxos.backup.storage.mockLog
-import org.calyxos.seedvault.core.backends.Backend
-import org.calyxos.seedvault.core.backends.FileBackupFileType.Blob
-import org.calyxos.seedvault.core.backends.IBackendManager
+import app.grapheneos.backup.storage.SnapshotRetriever
+import app.grapheneos.backup.storage.api.StoredSnapshot
+import app.grapheneos.backup.storage.db.CachedChunk
+import app.grapheneos.backup.storage.db.ChunksCache
+import app.grapheneos.backup.storage.getCurrentBackupSnapshots
+import app.grapheneos.backup.storage.getRandomString
+import app.grapheneos.backup.storage.mockLog
+import app.grapheneos.seedvault.core.backends.Backend
+import app.grapheneos.seedvault.core.backends.FileBackupFileType.Blob
+import app.grapheneos.seedvault.core.backends.IBackendManager
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -46,7 +46,7 @@ internal class ChunksCacheRepopulaterTest {
 
     init {
         mockLog()
-        mockkStatic("org.calyxos.backup.storage.SnapshotRetrieverKt")
+        mockkStatic("app.grapheneos.backup.storage.SnapshotRetrieverKt")
         every { backendManager.backend } returns backend
     }
 

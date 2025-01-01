@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.calyxos.backup.storage.ui.check
+package app.grapheneos.backup.storage.ui.check
 
 import android.os.Bundle
 import android.text.format.Formatter.formatShortFileSize
@@ -14,11 +14,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import org.calyxos.backup.storage.R
-import org.calyxos.backup.storage.api.CheckResult
-import org.calyxos.backup.storage.api.SnapshotItem
-import org.calyxos.backup.storage.api.StoredSnapshot
-import org.calyxos.backup.storage.ui.restore.SnapshotAdapter
+import app.grapheneos.backup.storage.R
+import app.grapheneos.backup.storage.api.CheckResult
+import app.grapheneos.backup.storage.api.SnapshotItem
+import app.grapheneos.backup.storage.api.StoredSnapshot
+import app.grapheneos.backup.storage.ui.restore.SnapshotAdapter
 
 internal class CheckResultFragment : Fragment() {
 
